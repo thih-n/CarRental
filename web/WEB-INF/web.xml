@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="6.0"
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
+    <welcome-file-list>
+        <welcome-file>login.jsp</welcome-file>
+    </welcome-file-list>
+
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.HomeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>HomePageServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.home.HomePageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomePageServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CarListServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.car.CarListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CarListServlet</servlet-name>
+        <url-pattern>/cars</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CarDetailServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.car.CarDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CarDetailServlet</servlet-name>
+        <url-pattern>/car/detail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <servlet-class>com.carrental.controller.admin.AdminDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <url-pattern>/admin/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRefundDetailServlet</servlet-name>
+        <servlet-class>com.carrental.controller.admin.AdminRefundDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminRefundDetailServlet</servlet-name>
+        <url-pattern>/admin/refund-detail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRefundServlet</servlet-name>
+        <servlet-class>com.carrental.controller.admin.AdminRefundServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminRefundServlet</servlet-name>
+        <url-pattern>/admin/refunds</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffDashboardServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffDashboardServlet</servlet-name>
+        <url-pattern>/staff/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DriverDashboardServlet</servlet-name>
+        <servlet-class>com.carrental.controller.driver.DriverDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DriverDashboardServlet</servlet-name>
+        <url-pattern>/driver/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminUserCreateServlet</servlet-name>
+        <servlet-class>com.carrental.controller.admin.AdminUserCreateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminUserCreateServlet</servlet-name>
+        <url-pattern>/admin/users/create</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>AdminLogsServlet</servlet-name>
+        <servlet-class>com.carrental.controller.admin.AdminPlaceholderServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminLogsServlet</servlet-name>
+        <url-pattern>/admin/logs</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.auth.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.auth.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.auth.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookingSearchServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.booking.BookingSearchServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookingSearchServlet</servlet-name>
+        <url-pattern>/booking/search</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookingDriverServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.booking.BookingDriverServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookingDriverServlet</servlet-name>
+        <url-pattern>/booking/drivers</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookingCheckoutServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.booking.BookingCheckoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookingCheckoutServlet</servlet-name>
+        <url-pattern>/booking/checkout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookingSuccessServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.booking.BookingSuccessServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookingSuccessServlet</servlet-name>
+        <url-pattern>/booking/success</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProfileViewServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.profile.ProfileViewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileViewServlet</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProfileUpdateServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.profile.ProfileUpdateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileUpdateServlet</servlet-name>
+        <url-pattern>/profile/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProfilePasswordChangeServlet</servlet-name>
+        <servlet-class>com.carrental.controller.web.profile.ProfilePasswordChangeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfilePasswordChangeServlet</servlet-name>
+        <url-pattern>/profile/password</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffBookingListServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffBookingListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffBookingListServlet</servlet-name>
+        <url-pattern>/staff/bookings</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffTripStartServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffTripStartServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffTripStartServlet</servlet-name>
+        <url-pattern>/staff/trip/start</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffTripCompleteServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffTripCompleteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffTripCompleteServlet</servlet-name>
+        <url-pattern>/staff/trip/complete</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffBookingCancelServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffBookingCancelServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffBookingCancelServlet</servlet-name>
+        <url-pattern>/staff/booking/cancel</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DriverScheduleServlet</servlet-name>
+        <servlet-class>com.carrental.controller.driver.DriverScheduleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DriverScheduleServlet</servlet-name>
+        <url-pattern>/driver/schedule</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DriverRequestListServlet</servlet-name>
+        <servlet-class>com.carrental.controller.driver.DriverRequestListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DriverRequestListServlet</servlet-name>
+        <url-pattern>/driver/requests</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DriverTripStartServlet</servlet-name>
+        <servlet-class>com.carrental.controller.driver.DriverTripStartServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DriverTripStartServlet</servlet-name>
+        <url-pattern>/driver/trip/start</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DriverTripCompleteServlet</servlet-name>
+        <servlet-class>com.carrental.controller.driver.DriverTripCompleteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DriverTripCompleteServlet</servlet-name>
+        <url-pattern>/driver/trip/complete</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ClientDashboardServlet</servlet-name>
+        <servlet-class>com.carrental.controller.client.ClientDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClientDashboardServlet</servlet-name>
+        <url-pattern>/client/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ClientOrderListServlet</servlet-name>
+        <servlet-class>com.carrental.controller.client.ClientOrderListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClientOrderListServlet</servlet-name>
+        <url-pattern>/client/orders</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ClientTripDetailServlet</servlet-name>
+        <servlet-class>com.carrental.controller.client.ClientTripDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClientTripDetailServlet</servlet-name>
+        <url-pattern>/client/trip/detail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ClientHistoryServlet</servlet-name>
+        <servlet-class>com.carrental.controller.client.ClientHistoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClientHistoryServlet</servlet-name>
+        <url-pattern>/client/history</url-pattern>
+    </servlet-mapping>
+
+    <!-- Staff Driver Management -->
+    <servlet>
+        <servlet-name>StaffDriverListServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffDriverListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffDriverListServlet</servlet-name>
+        <url-pattern>/staff/drivers</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffDriverUpdateServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffDriverUpdateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffDriverUpdateServlet</servlet-name>
+        <url-pattern>/staff/driver/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffDriverToggleStatusServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffDriverToggleStatusServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffDriverToggleStatusServlet</servlet-name>
+        <url-pattern>/staff/driver/toggle-status</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffDriverLeaveListServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffDriverLeaveListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffDriverLeaveListServlet</servlet-name>
+        <url-pattern>/staff/driver/requests</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffDriverLeaveApproveServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffDriverLeaveApproveServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffDriverLeaveApproveServlet</servlet-name>
+        <url-pattern>/staff/driver/leave/approve</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffDriverLeaveRejectServlet</servlet-name>
+        <servlet-class>com.carrental.controller.staff.StaffDriverLeaveRejectServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffDriverLeaveRejectServlet</servlet-name>
+        <url-pattern>/staff/driver/leave/reject</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>SingleSessionFilter</filter-name>
+        <filter-class>com.carrental.filter.SingleSessionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SingleSessionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/views/error/404.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/views/error/403.jsp</location>
+    </error-page>
+
+</web-app>
