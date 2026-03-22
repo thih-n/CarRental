@@ -67,13 +67,39 @@ public class ContractDAO {
         return null;
     }
 
-    public boolean updateReturnInfo(int contractID, Integer returnStaffID, String returnCondition) {
-        String sql = "UPDATE Contracts SET ReturnStaffID = ?, ReturnCondition = ? WHERE ContractID = ?";
+//    public boolean updateReturnInfo(int contractID, Integer returnStaffID, String returnCondition) {
+//        String sql = "UPDATE Contracts SET ReturnStaffID = ?, ReturnCondition = ? WHERE ContractID = ?";
+//        try (Connection conn = new DBContext().getConnection();
+//             PreparedStatement ps = conn.prepareStatement(sql)) {
+//            ps.setObject(1, returnStaffID);
+//            ps.setString(2, returnCondition);
+//            ps.setInt(3, contractID);
+//            return ps.executeUpdate() > 0;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+    public boolean updateReturnInfo(int contractID, Integer returnStaffID, String returnCondition, Integer dropOffLocationID) {
+        String sql = "UPDATE Contracts SET ReturnStaffID = ?, ReturnCondition = ?, DropOffLocationID = ? WHERE ContractID = ?";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setObject(1, returnStaffID);
             ps.setString(2, returnCondition);
-            ps.setInt(3, contractID);
+            ps.setObject(3, dropOffLocationID);
+            ps.setInt(4, contractID);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean updateStartStaff(int contractID, Integer staffID) {
+        String sql = "UPDATE Contracts SET StaffID = ? WHERE ContractID = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setObject(1, staffID);
+            ps.setInt(2, contractID);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
