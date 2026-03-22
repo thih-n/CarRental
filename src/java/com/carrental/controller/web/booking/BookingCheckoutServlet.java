@@ -16,6 +16,7 @@ import com.carrental.entity.Location;
 import com.carrental.entity.CarSchedule;
 import com.carrental.entity.Contract;
 import com.carrental.entity.ContractDetail;
+import com.carrental.entity.Payment;
 import com.carrental.entity.User;
 import com.carrental.service.BookingPricingService;
 import com.carrental.util.ValidationUtil;
@@ -130,6 +131,7 @@ public class BookingCheckoutServlet extends BaseAuthentication {
 
         String startDateTimeStr = request.getParameter("startDateTime");
         String endDateTimeStr = request.getParameter("endDateTime");
+        String paymentMethod = request.getParameter("paymentMethod");
         String notes = request.getParameter("notes");
 
         if (carID == null || pickUpLocationID == null || ValidationUtil.isBlank(startDateTimeStr)
@@ -186,7 +188,17 @@ public class BookingCheckoutServlet extends BaseAuthentication {
         schedule.setScheduleStatus("Booked");
         schedule.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
-        int contractID = new BookingDAO().createBookingTransaction(contract, detail, schedule, driverID);
+        Payment payment = null;
+        if (depositAmount != null && depositAmount.compareTo(BigDecimal.ZERO) > 0) {
+            payment = new Payment();
+            payment.setAmount(depositAmount);
+            payment.setPaymentMethod(paymentMethod != null && !paymentMethod.isEmpty() ? paymentMethod : "VNPay");
+            payment.setPaymentType("Deposit");
+            payment.setPaymentStatus("Completed");
+            payment.setNote("Khách hàng thanh toán trước 30% cọc trực tuyến");
+        }
+
+        int contractID = new BookingDAO().createBookingTransaction(contract, detail, schedule, driverID, payment);
         if (contractID <= 0) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Không thể tạo booking.");
             return;
