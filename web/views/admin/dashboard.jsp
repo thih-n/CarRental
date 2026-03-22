@@ -96,6 +96,30 @@
         </div>
 
         <div class="dashboard-body">
+            <form method="get" class="card chart-card mb-3">
+                <div class="card-body d-flex gap-2 align-items-end">
+                    <div>
+                        <label class="form-label mb-1">Tháng</label>
+                        <select name="month" class="form-select">
+                            <c:forEach begin="1" end="12" var="m">
+                                <option value="${m}" ${selectedMonth == m ? 'selected' : ''}>${m}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label mb-1">Năm</label>
+                        <select name="year" class="form-select">
+                            <c:forEach begin="2020" end="2035" var="y">
+                                <option value="${y}" ${selectedYear == y ? 'selected' : ''}>${y}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <input type="hidden" name="refundStatus" value="${refundStatus}">
+                    <input type="hidden" name="refundSearch" value="${refundSearch}">
+                    <button type="submit" class="btn btn-primary">Lọc</button>
+                </div>
+            </form>
+
             <div class="row g-3 mb-3">
                 <div class="col-md-3">
                     <div class="card stat-card">
@@ -124,12 +148,9 @@
                 <div class="col-md-3">
                     <div class="card stat-card">
                         <div class="card-body">
-                            <div class="text-muted small">Doanh thu 6 tháng</div>
+                            <div class="text-muted small">Doanh thu (tháng ${selectedMonth}/${selectedYear})</div>
                             <h4 class="mb-0">
-                                <c:choose>
-                                    <c:when test="${empty revenuePoints}">0đ</c:when>
-                                    <c:otherwise>${revenuePoints[0].totalAmount}đ</c:otherwise>
-                                </c:choose>
+                                <fmt:formatNumber value="${selectedMonthRevenue}" pattern="#,###"/>đ
                             </h4>
                         </div>
                     </div>
@@ -139,7 +160,7 @@
             <div class="row g-3">
                 <div class="col-lg-8">
                     <div class="card chart-card">
-                        <div class="card-header bg-white fw-semibold">Doanh thu 6 tháng gần nhất</div>
+                        <div class="card-header bg-white fw-semibold">Doanh thu 6 tháng tính đến ${selectedMonth}/${selectedYear}</div>
                         <div class="card-body">
                             <canvas id="revenueChart" height="120"></canvas>
                         </div>
@@ -158,7 +179,7 @@
                     <div class="card chart-card quick-action">
                         <div class="card-header bg-white fw-semibold">Quick actions</div>
                         <div class="card-body d-grid gap-2">
-                            <a class="btn btn-dark" href="${pageContext.request.contextPath}/admin/users/create">Tạo tài khoản Admin/Staff/Driver</a>
+                            <a class="btn btn-dark" href="${pageContext.request.contextPath}/admin/users?type=customer">Tạo tài khoản Admin/Staff/Driver</a>
                             <a class="btn btn-outline-dark" href="${pageContext.request.contextPath}/admin/bookings">Duyệt yêu cầu booking</a>
                             <a class="btn btn-outline-dark" href="${pageContext.request.contextPath}/admin/reports">Xuất báo cáo doanh thu</a>
                         </div>
@@ -168,12 +189,14 @@
                 <div class="col-12">
                     <div class="card chart-card">
                         <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
-                            <span>Danh sách hoàn tiền</span>
+                            <span>Danh sách hoàn tiền (tháng ${selectedMonth}/${selectedYear})</span>
                             <form method="get" class="d-flex gap-2">
+                                <input type="hidden" name="month" value="${selectedMonth}">
+                                <input type="hidden" name="year" value="${selectedYear}">
                                 <select name="refundStatus" class="form-select form-select-sm" style="width: 120px;">
                                     <option value="all">Tất cả</option>
                                     <option value="Pending" ${refundStatus == 'Pending' ? 'selected' : ''}>Chờ xử lý</option>
-                                    <option value="Success" ${refundStatus == 'Success' ? 'selected' : ''}>Hoàn thành</option>
+                                    <option value="Completed" ${refundStatus == 'Completed' ? 'selected' : ''}>Hoàn thành</option>
                                 </select>
                                 <input type="text" name="refundSearch" class="form-control form-control-sm" 
                                        placeholder="Tìm kiếm..." value="${refundSearch}" style="width: 150px;">
@@ -251,7 +274,7 @@
 
                 <div class="col-lg-6">
                     <div class="card chart-card">
-                        <div class="card-header bg-white fw-semibold">Đánh giá mới 4-5★</div>
+                        <div class="card-header bg-white fw-semibold">Đánh giá mới (tháng ${selectedMonth}/${selectedYear})</div>
                         <ul class="list-group list-group-flush">
                             <c:forEach var="r" items="${latestReviews}">
                                 <li class="list-group-item d-flex justify-content-between">

@@ -29,26 +29,71 @@ public class AdminDashboardDAO {
         return fetchCount(sql);
     }
 
-    public List<AdminRevenuePoint> getRevenueLastSixMonths() {
+    public List<AdminRevenuePoint> getRevenueLastSixMonths(int month, int year) {
         List<AdminRevenuePoint> items = new ArrayList<>();
-        String sql = "SELECT TOP 6 FORMAT(CreatedDate, 'MM/yyyy') AS Label, SUM(TotalAmount) AS TotalAmount "
-                + "FROM Contracts "
-                + "GROUP BY FORMAT(CreatedDate, 'MM/yyyy') "
-                + "ORDER BY MAX(CreatedDate) DESC";
+        String sql = "WITH MonthSeries AS ( "
+                + "  SELECT DATEFROMPARTS(?, ?, 1) AS MonthStart, 1 AS lvl "
+                + "  UNION ALL "
+                + "  SELECT DATEADD(MONTH, -1, MonthStart), lvl + 1 "
+                + "  FROM MonthSeries WHERE lvl < 6 "
+                + ") "
+                + "SELECT FORMAT(ms.MonthStart, 'MM/yyyy') AS Label, "
+                + "       ISNULL(SUM(CASE "
+                + "         WHEN cd.DetailStatus = 'Completed' THEN c.TotalAmount "
+                + "         WHEN cd.DetailStatus IN ('Booked', 'Draft') THEN c.DepositAmount "
+                + "         WHEN cd.DetailStatus = 'Cancelled' AND cancelledBy.RoleID = 5 THEN c.DepositAmount "
+                + "         ELSE 0 END), 0) AS TotalAmount "
+                + "FROM MonthSeries ms "
+                + "LEFT JOIN Contracts c "
+                + "  ON YEAR(c.CreatedDate) = YEAR(ms.MonthStart) "
+                + " AND MONTH(c.CreatedDate) = MONTH(ms.MonthStart) "
+                + "LEFT JOIN ContractDetails cd ON cd.ContractID = c.ContractID "
+                + "LEFT JOIN Users cancelledBy ON cancelledBy.UserID = c.CancelledBy "
+                + "GROUP BY ms.MonthStart "
+                + "ORDER BY ms.MonthStart ASC OPTION (MAXRECURSION 6)";
 
         try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                AdminRevenuePoint point = new AdminRevenuePoint();
-                point.setLabel(rs.getString("Label"));
-                point.setTotalAmount(rs.getBigDecimal("TotalAmount"));
-                items.add(point);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, year);
+            ps.setInt(2, month);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    AdminRevenuePoint point = new AdminRevenuePoint();
+                    point.setLabel(rs.getString("Label"));
+                    point.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                    items.add(point);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return items;
+    }
+
+    public BigDecimal getRevenueForMonth(int month, int year) {
+        String sql = "SELECT ISNULL(SUM(CASE "
+                + "WHEN cd.DetailStatus = 'Completed' THEN c.TotalAmount "
+                + "WHEN cd.DetailStatus IN ('Booked', 'Draft') THEN c.DepositAmount "
+                + "WHEN cd.DetailStatus = 'Cancelled' AND cancelledBy.RoleID = 5 THEN c.DepositAmount "
+                + "ELSE 0 END), 0) "
+                + "FROM Contracts c "
+                + "LEFT JOIN ContractDetails cd ON cd.ContractID = c.ContractID "
+                + "LEFT JOIN Users cancelledBy ON cancelledBy.UserID = c.CancelledBy "
+                + "WHERE MONTH(c.CreatedDate) = ? AND YEAR(c.CreatedDate) = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    BigDecimal value = rs.getBigDecimal(1);
+                    return value == null ? BigDecimal.ZERO : value;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return BigDecimal.ZERO;
     }
 
     public List<AdminStatusCount> getCarStatusCounts() {
@@ -328,7 +373,76 @@ public class AdminDashboardDAO {
         }
         return refunds;
     }
-    
+    public List<Map<String, Object>> getRefundsByTime(String status, String search, int month, int year) {
+        List<Map<String, Object>> refunds = new ArrayList<>();
+        
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.PaymentID, p.ContractID, p.Amount, p.PaymentDate, p.PaymentStatus, ");
+        sql.append("p.RefPaymentID, p.Note, ");
+        sql.append("c.ContractCode, c.StartDateTime, c.EndDateTime, ");
+        sql.append("u.FullName as CustomerName, ");
+        sql.append("'-' as DriverName ");
+        sql.append("FROM Payments p ");
+        sql.append("LEFT JOIN Contracts c ON p.ContractID = c.ContractID ");
+        sql.append("LEFT JOIN Users u ON c.CustomerID = u.UserID ");
+        sql.append("WHERE p.PaymentType = 'Refund' ");
+        sql.append("AND MONTH(p.PaymentDate) = ? AND YEAR(p.PaymentDate) = ? ");
+        
+        List<String> conditions = new ArrayList<>();
+        
+        if (status != null && !status.isEmpty() && !status.equals("all")) {
+            conditions.add("p.PaymentStatus = ?");
+        }
+        
+        if (search != null && !search.trim().isEmpty()) {
+            conditions.add("(u.FullName LIKE ? OR c.ContractCode LIKE ? OR p.Note LIKE ?)");
+        }
+        
+        if (!conditions.isEmpty()) {
+            sql.append(" AND ");
+            sql.append(String.join(" AND ", conditions));
+        }
+        
+        sql.append(" ORDER BY p.PaymentDate DESC");
+        
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            
+            int paramIndex = 1;
+            ps.setInt(paramIndex++, month);
+            ps.setInt(paramIndex++, year);
+            if (status != null && !status.isEmpty() && !status.equals("all")) {
+                ps.setString(paramIndex++, status);
+            }
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search.trim() + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> refund = new HashMap<>();
+                refund.put("paymentID", rs.getInt("PaymentID"));
+                refund.put("contractID", rs.getObject("ContractID"));
+                refund.put("amount", rs.getBigDecimal("Amount") != null ? rs.getBigDecimal("Amount").setScale(0) : BigDecimal.ZERO);
+                refund.put("paymentDate", rs.getTimestamp("PaymentDate"));
+                refund.put("paymentStatus", rs.getString("PaymentStatus"));
+                refund.put("refPaymentID", rs.getObject("RefPaymentID"));
+                refund.put("note", rs.getString("Note"));
+                refund.put("bookingID", rs.getObject("ContractCode"));
+                refund.put("pickupDate", rs.getTimestamp("StartDateTime"));
+                refund.put("returnDate", rs.getTimestamp("EndDateTime"));
+                refund.put("customerName", rs.getString("CustomerName"));
+                refund.put("driverName", rs.getString("DriverName"));
+                refunds.add(refund);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return refunds;
+    }
     // Update refund status
     public boolean updateRefundStatus(int paymentID, String status) {
         String sql = "UPDATE Payments SET PaymentStatus = ? WHERE PaymentID = ? AND PaymentType = 'Refund'";
