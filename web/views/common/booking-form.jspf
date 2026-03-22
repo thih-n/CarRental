@@ -1,0 +1,180 @@
+<%-- 
+    Reusable booking form fragment
+    Parameters:
+    - formAction: the form action URL
+    - startTimeId: ID for start time input (default: searchStartTime)
+    - endTimeId: ID for end time input (default: searchEndTime)
+    - locationId: ID for location select (default: searchLocation)
+    - showLocation: whether to show location dropdown (default: true)
+    - locations: list of locations (request attribute)
+    - startDateTime: current startDateTime value (request attribute)
+    - endDateTime: current endDateTime value (request attribute)
+    - pickUpLocationID: current pickUpLocationID value (request attribute or param)
+--%>
+<%@ attribute name="formAction" required="true" %>
+<%@ attribute name="startTimeId" required="false" %>
+<%@ attribute name="endTimeId" required="false" %>
+<%@ attribute name="locationId" required="false" %>
+<%@ attribute name="showLocation" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="submitText" required="false" %>
+
+<c:if test="${empty startTimeId}"><c:set var="startTimeId" value="searchStartTime"/></c:if>
+<c:if test="${empty endTimeId}"><c:set var="endTimeId" value="searchEndTime"/></c:if>
+<c:if test="${empty locationId}"><c:set var="locationId" value="searchLocation"/></c:if>
+<c:if test="${empty showLocation}"><c:set var="showLocation" value="true"/></c:if>
+<c:if test="${empty submitText}"><c:set var="submitText" value="Search"/></c:if>
+
+<form action="${formAction}" method="get" class="row g-3 align-items-end" novalidate>
+    <div class="col-md-4">
+        <label class="form-label">Pickup time</label>
+        <input type="datetime-local" class="form-control" name="startDateTime" id="${startTimeId}" value="${startDateTime}" required>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Return time</label>
+        <input type="datetime-local" class="form-control" name="endDateTime" id="${endTimeId}" value="${endDateTime}" required>
+    </div>
+    <c:if test="${showLocation}">
+        <div class="col-md-3">
+            <label class="form-label">Location</label>
+            <select name="pickUpLocationID" id="${locationId}" class="form-select" required>
+                <c:forEach var="loc" items="${locations}">
+                    <option value="${loc.locationID}" ${(empty pickUpLocationID && loc.locationID == 1) || pickUpLocationID == loc.locationID || param.pickUpLocationID == loc.locationID ? 'selected' : ''}>${loc.locationName}</option>
+                </c:forEach>
+            </select>
+        </div>
+    </c:if>
+    <div class="col-md-1 d-grid">
+        <button class="btn btn-dark" type="submit">${submitText}</button>
+    </div>
+</form>
+
+<script>
+(function() {
+    function formatDateTimeLocal(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+    }
+
+    const startInput = document.getElementById('${startTimeId}');
+    const endInput = document.getElementById('${endTimeId}');
+
+    if (startInput && endInput) {
+        // Function to set min based on selected date
+        function setStartMin() {
+            const now = new Date();
+            
+            if (startInput.value) {
+                const selectedDate = new Date(startInput.value);
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const selectedDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+                
+                if (selectedDay.getTime() === today.getTime()) {
+                    const minTime = new Date(now.getTime() + 60 * 1000);
+                    minTime.setSeconds(0);
+                    minTime.setMilliseconds(0);
+                    startInput.min = formatDateTimeLocal(minTime);
+                } else if (selectedDay > today) {
+                    startInput.removeAttribute('min');
+                }
+            } else {
+                const minTime = new Date(now.getTime() + 60 * 1000);
+                minTime.setSeconds(0);
+                minTime.setMilliseconds(0);
+                startInput.min = formatDateTimeLocal(minTime);
+            }
+        }
+
+        // Set default values if empty
+        if (!startInput.value) {
+            const now = new Date();
+            now.setMinutes(0, 0, 0);
+            now.setHours(now.getHours() + 1);
+            startInput.value = formatDateTimeLocal(now);
+
+            const endDate = new Date(now);
+            endDate.setHours(endDate.getHours() + 4);
+            endInput.value = formatDateTimeLocal(endDate);
+        }
+
+        if (!endInput.value && startInput.value) {
+            const sDate = new Date(startInput.value);
+            const endDate2 = new Date(sDate);
+            endDate2.setHours(endDate2.getHours() + 4);
+            endInput.value = formatDateTimeLocal(endDate2);
+        }
+
+        // Update end min when start changes
+        function updateEndMin() {
+            const startDate = new Date(startInput.value);
+            if (!isNaN(startDate.getTime())) {
+                const minEnd = new Date(startDate.getTime() + 60 * 60 * 1000);
+                endInput.min = formatDateTimeLocal(minEnd);
+            }
+        }
+
+        updateEndMin();
+
+        startInput.addEventListener('change', function() {
+            setStartMin();
+            const sDate = new Date(this.value);
+            if (!isNaN(sDate.getTime())) {
+                const newEndDate = new Date(sDate);
+                newEndDate.setHours(newEndDate.getHours() + 4);
+                endInput.value = formatDateTimeLocal(newEndDate);
+                updateEndMin();
+            }
+        });
+
+        endInput.addEventListener('change', function() {
+            updateEndMin();
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const locationInput = document.getElementById('${locationId}');
+                const startVal = startInput.value;
+                const endVal = endInput.value;
+                const locationVal = locationInput ? locationInput.value : '';
+
+                if (!startVal || !endVal || !locationVal) {
+                    alert('Vui lòng chọn đầy đủ thời gian nhận xe, trả xe và địa điểm!');
+                    e.preventDefault();
+                    return false;
+                }
+
+                const startDate = new Date(startVal);
+                const endDate = new Date(endVal);
+
+                // Check start date is not in the past
+                const now = new Date();
+                if (startDate < now) {
+                    alert('Thời gian nhận xe không được trong quá khứ!');
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Check end date is after start date
+                if (endDate <= startDate) {
+                    alert('Thời gian trả xe phải sau thời gian nhận xe!');
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Check minimum 1 hour difference
+                const hoursDiff = (endDate - startDate) / (1000 * 60 * 60);
+                if (hoursDiff < 1) {
+                    alert('Thời gian thuê xe tối thiểu là 1 tiếng!');
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+    }
+})();
+</script>
