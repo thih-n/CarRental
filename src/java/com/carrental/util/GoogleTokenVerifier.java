@@ -11,7 +11,7 @@ public class GoogleTokenVerifier {
 
     // API của Google để kiểm tra Token
     private static final String GOOGLE_TOKEN_INFO_URL = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=";
-    private static final String FIREBASE_API_KEY = "AIzaSyCW-"; 
+    private static final String FIREBASE_API_KEY = ""; 
 
     public static String getPhoneNumberFromToken(String idToken) {
         try {

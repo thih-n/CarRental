@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -176,7 +177,8 @@
                                 <div>Brand: ${car.brandName}</div>
                                 <div>Type: ${car.typeName}</div>
                                 <div>Seats: ${car.seatCount}</div>
-                                <div class="fw-bold text-primary mt-2">${car.defaultPricePerDay} / day</div>
+                                <div class="fw-bold text-primary mt-2">${car.defaultPricePerDay} / day</div                              
+                                
                             </div>
                             <div class="card-footer bg-white border-0 d-flex gap-2">
                                 <a class="btn btn-sm btn-outline-dark" href="${pageContext.request.contextPath}/car/detail?id=${car.carID}&startDateTime=${startDateTime}&endDateTime=${endDateTime}&pickUpLocationID=${pickUpLocationID}<c:if test="${not empty param.brandID}">&brandID=${param.brandID}</c:if><c:if test="${not empty param.typeID}">&typeID=${param.typeID}</c:if><c:if test="${not empty param.priceRange}">&priceRange=${param.priceRange}</c:if><c:if test="${not empty param.sortOrder}">&sortOrder=${param.sortOrder}</c:if><c:if test="${not empty param.page}">&page=${param.page}</c:if>">Detail</a>

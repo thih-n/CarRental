@@ -13,8 +13,8 @@ import jakarta.mail.internet.InternetAddress;
 
 public class Email {
 
-    private final String eFrom = "dongnguyen1968hldh@gmail.com";
-    private final String ePass = "wbwp jjue wuqf zrua";
+    // private final String eFrom = "d";
+    // private final String ePass = "";
 
     public boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$";

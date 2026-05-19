@@ -23,7 +23,7 @@ public class DBContext {
     private final String serverName = "localhost";
     
     // TRICK: Append the SSL properties right to the database name!
-    private final String dbName = "CarRentalDB;encrypt=true;trustServerCertificate=true;"; 
+    private final String dbName = "CarRentalDBv1;encrypt=true;trustServerCertificate=true;"; 
     
     private final String portNumber = "9803";
     private final String instance="";//LEAVE THIS ONE EMPTY IF YOUR SQL IS A SINGLE INSTANCE

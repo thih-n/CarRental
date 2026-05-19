@@ -162,25 +162,25 @@ public class ClientBookingDAO {
 
     public boolean cancelBooking(int contractID, int cancelledByUserID, String cancelReason) {
         // Get contract details first for refund calculation
-        BigDecimal refundAmount = BigDecimal.ZERO;
-        Integer depositPaymentID = null;
-        
-        String getDepositSql = "SELECT p.PaymentID, p.Amount FROM Payments p "
-                + "JOIN Contracts c ON p.ContractID = c.ContractID "
-                + "WHERE c.ContractID = ? AND p.PaymentType = 'Deposit' AND p.PaymentStatus = 'Completed'";
-        
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(getDepositSql)) {
-            ps.setInt(1, contractID);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    depositPaymentID = rs.getInt("PaymentID");
-                    refundAmount = rs.getBigDecimal("Amount");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        BigDecimal refundAmount = BigDecimal.ZERO;
+//        Integer depositPaymentID = null;
+//        
+//        String getDepositSql = "SELECT p.PaymentID, p.Amount FROM Payments p "
+//                + "JOIN Contracts c ON p.ContractID = c.ContractID "
+//                + "WHERE c.ContractID = ? AND p.PaymentType = 'Deposit' AND p.PaymentStatus = 'Completed'";
+//        
+//        try (Connection conn = new DBContext().getConnection();
+//             PreparedStatement ps = conn.prepareStatement(getDepositSql)) {
+//            ps.setInt(1, contractID);
+//            try (ResultSet rs = ps.executeQuery()) {
+//                if (rs.next()) {
+//                    depositPaymentID = rs.getInt("PaymentID");
+//                    refundAmount = rs.getBigDecimal("Amount");
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         
         // Cancel the contract and update CarSchedules to Cancelled
         String updateContract = "UPDATE Contracts SET StatusID = 4, CancelReason = ?, CancelledBy = ? WHERE ContractID = ?";
@@ -188,16 +188,16 @@ public class ClientBookingDAO {
         String updateSchedule = "UPDATE CarSchedules SET ScheduleStatus = 'Cancelled' WHERE ContractID = ?";
         
         // Create refund record
-        String insertRefund = "INSERT INTO Payments (ContractID, Amount, PaymentDate, PaymentMethod, PaymentStatus, PaymentType, RefPaymentID, Note) "
-                + "VALUES (?, ?, GETDATE(), 'Bank Transfer', 'Pending', 'Refund', ?, ?)";
+//        String insertRefund = "INSERT INTO Payments (ContractID, Amount, PaymentDate, PaymentMethod, PaymentStatus, PaymentType, RefPaymentID, Note) "
+//                + "VALUES (?, ?, GETDATE(), 'Bank Transfer', 'Pending', 'Refund', ?, ?)";
 
         try (Connection conn = new DBContext().getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement ps1 = conn.prepareStatement(updateContract);
                  PreparedStatement ps2 = conn.prepareStatement(updateDetail);
-                 PreparedStatement ps3 = conn.prepareStatement(updateSchedule);
-                 PreparedStatement psRefund = conn.prepareStatement(insertRefund)) {
-
+//                 PreparedStatement ps3 = conn.prepareStatement(updateSchedule);
+//                 PreparedStatement psRefund = conn.prepareStatement(insertRefund)) {
+PreparedStatement ps3 = conn.prepareStatement(updateSchedule)) {
                 ps1.setString(1, cancelReason);
                 ps1.setInt(2, cancelledByUserID);
                 ps1.setInt(3, contractID);
@@ -210,17 +210,17 @@ public class ClientBookingDAO {
                 ps3.executeUpdate();
                 
                 // Insert refund record if there's a deposit to refund
-                if (refundAmount.compareTo(BigDecimal.ZERO) > 0) {
-                    psRefund.setInt(1, contractID);
-                    psRefund.setBigDecimal(2, refundAmount);
-                    if (depositPaymentID != null) {
-                        psRefund.setInt(3, depositPaymentID);
-                    } else {
-                        psRefund.setNull(3, Types.INTEGER);
-                    }
-                    psRefund.setString(4, "Hủy đơn - Hoàn tiền đặt cọc");
-                    psRefund.executeUpdate();
-                }
+//                if (refundAmount.compareTo(BigDecimal.ZERO) > 0) {
+//                    psRefund.setInt(1, contractID);
+//                    psRefund.setBigDecimal(2, refundAmount);
+//                    if (depositPaymentID != null) {
+//                        psRefund.setInt(3, depositPaymentID);
+//                    } else {
+//                        psRefund.setNull(3, Types.INTEGER);
+//                    }
+//                    psRefund.setString(4, "Hủy đơn - Hoàn tiền đặt cọc");
+//                    psRefund.executeUpdate();
+//                }
 
                 conn.commit();
                 return true;
